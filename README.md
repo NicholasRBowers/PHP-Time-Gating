@@ -1,7 +1,21 @@
-PHP Store Hours
+PHP Time Gating
 ===============
+*Adapted from [coryetzkorn's](https://github.com/coryetzkorn) [php_store_hours](https://github.com/coryetzkorn/php_store_hours).*
 
-PHP Store Hours is a simple script that outputs content based on time-of-day and-day-of-week. Simply include the script in any PHP page, adjust opening and closing hours for each day of the week and the script will output content based on the time ranges you specify.
+---------------------------------------------------------------------------
+
+**Repurposed by**: [@NicholasRBowers](http://twitter.com/NicholasRBowers)
+**Original Author**: [coryetzkorn](https://github.com/coryetzkorn)
+
+---------------------------------------------------------------------------
+
+Objective
+---------
+To create a robust set of functions which return `true` or `false` based on the current (or future) time and a set of "open" times.  This allows web developers to display alternate content in the frontend (displaying an open or closed sign) or complete certain backend functions (setting ecommerce store opened or closed). 
+
+Under Construction
+------------------
+PHP Time Gating is a simple script that returns `true` or `false` based on time-of-day and-day-of-week. Simply include the script in any PHP page, adjust opening and closing hours for each day of the week and the script will output content based on the time ranges you specify.
 
 ###Easily set open hours for each day of the week
 ```php
@@ -35,10 +49,3 @@ $exception = "<h3>Sorry, we're closed for %exception%.</h3>";
 ```
 
 There's no need to copy/paste the code above... it's all included in the download. Please report any bugs or issues here on GitHub. I'd love to hear your ideas for improving this script or see how you've used it in your latest project.
-
-
-##Sites using PHP Store Hours
-* [Des Plaines Public Library](http://dppl.org/)
-* [The Nevada Discovery Museum](http://www.nvdm.org/)
-* [Minne's Diner](http://www.minnesdiner.com/)
-* Want to showcase your site? Tweet [@coryetzkorn](http://twitter.com/coryetzkorn)
