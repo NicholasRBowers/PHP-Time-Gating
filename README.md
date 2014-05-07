@@ -4,7 +4,7 @@ PHP Time Gating
 
 ---------------------------------------------------------------------------
 
-**Repurposed by**: [@NicholasRBowers](http://twitter.com/NicholasRBowers)
+**Repurposed by**: [@NicholasRBowers](http://twitter.com/NicholasRBowers)  
 **Original Author**: [coryetzkorn](https://github.com/coryetzkorn)
 
 ---------------------------------------------------------------------------

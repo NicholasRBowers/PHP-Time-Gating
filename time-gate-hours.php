@@ -11,10 +11,10 @@ date_default_timezone_set('America/New_York');
 // If the gate is open late (ie. 6pm - 1am), add hours after midnight to the next day (ie. 00:00-1:00).
 $openHours = array(
   'mon' => array('11:00-20:30'),                  // Normal.
-  'tue' => array('11:00-16:00', '18:00-20:30'),   // Multiple open times.
-  'wed' => array(),                               // Open all day.
-  'thu' => array('11:00-23:59', '00:00-2:00'),    // Open past midnight.
-  'fri' => array('11:00-20:30'),
+  'tue' => array('11:00-16:00', '18:00-22:30'),   // Multiple open times.
+  'wed' => array('11:00-23:59'),                               // Open all day.
+  'thu' => array('00:00-2:00','11:00-23:59'),                  // Open past midnight.
+  'fri' => array('00:00-2:00', '11:00-20:30'),
   'sat' => array('11:00-20:00'),
   'sun' => array('11:00-20:30')
 );
