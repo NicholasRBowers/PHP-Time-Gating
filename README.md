@@ -1,6 +1,6 @@
 PHP Time Gating
 ===============
-*Adapted from [coryetzkorn's](https://github.com/coryetzkorn) [php_store_hours](https://github.com/coryetzkorn/php_store_hours).*
+*Adapted from [coryetzkorn's](https://github.com/coryetzkorn) [php store hours](https://github.com/coryetzkorn/php_store_hours).*
 
 ---------------------------------------------------------------------------
 
@@ -11,7 +11,20 @@ PHP Time Gating
 
 Objective
 ---------
-To create a robust set of functions which return `true` or `false` based on the current (or future) time and a set of "open" times.  This allows web developers to display alternate content in the frontend (displaying an open or closed sign) or complete certain backend functions (setting ecommerce store opened or closed). 
+To create a robust set of functions which return `true` or `false` based on the current (or future) time and a set of "open" times.  This allows web developers to display alternate content in the frontend (displaying an open or closed sign) or complete certain backend functions (setting ecommerce store opened or closed).
+
+Documentation
+-------------
+
+    isOpen(string $time, string $date, array $openHours [, boolean $getDetails [, array $exceptions]])
+
++ `$time` is the time for which you would like to know the status of the gate.
++ `$date` is the date for which you would like to know the status of the gate.
++ `$openHours` is the array in which the normal gate hours are stored.
++ `$getDetails` (default = false) tells the function if you would like to get the bounds of the current status of the gate,
+    + If the gate is open, get the time it opened, and the time it will be closing;
+    + If the gate is closed, get the time it closed, and the time it will be opening.
++ `$exceptions` (optional) is the array in which the exceptions (closed all day) to the normal $openHours are stored.
 
 Under Construction
 ------------------
