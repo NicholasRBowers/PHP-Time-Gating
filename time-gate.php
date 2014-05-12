@@ -19,7 +19,7 @@ function isOpen($time, $date, $openHours, $getDetails = false, $exceptions) { //
     return false;
   }
 
-  if (count($openHours[$day]) === 0) { 																				// Check if the gate is open all day.
+  if ($openHours[$day][0] == '00:00-00:00') { 															 // Check if the gate is open all day.
     // if getDetails,
       // go to next day.
       // if the next day's first open entry is 00:00
@@ -77,7 +77,7 @@ function isClosedAllDay($date, $openHours, $exceptions) { // Check if gate is cl
 		}
 	}
 
-	if ($openHours[$day][0] == '00:00-00:00') { 						// Check if the store is closed all day.
+	if (count($openHours[$day]) === 0) { 						        // Check if the store is closed all day.
 		return true;
 	}
 	return false;

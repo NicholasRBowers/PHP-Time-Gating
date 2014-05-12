@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php include('time-gate.php'); ?>
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -13,7 +14,7 @@
 
 	<body>
 		<h1>Gadgets Inc.</h1>
-		<h2>Store Hours</h2>
-		<?php include('store-hours.php'); ?>
+		<h2>Store Status</h2>
+		<h3><?php if(isOpenNow()) {echo 'Open.';} else {echo 'Closed.';} ?></h3>
 	</body>
 </html>
