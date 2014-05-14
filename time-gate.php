@@ -1,58 +1,72 @@
 <?php
 require_once('time-gate-hours.php');
+$now = date("G:i");
+$today = date("m/d");
 
-function isOpen($time, $date, $openHours, $exceptions) { // Check if the gate is open during a specific time.
-  $time = strtotime($time); 																									// Prepare variables.
-  $days = array('mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun');
+function isOpen($time = $now, $date = $today, $openHours = $openHours, $exceptions = $exceptions) {
+  // Prepare variables.
+  $time = strtotime($time);
   $day = strtolower(date("D", strtotime($date)));
 
-  if (isClosedAllDay($date, $openHours, $exceptions)) { 											// Check if the gate is closed all day.
+  // Check if today is an exception or if the gate is normally closed all day.
+  if (isException($date, $exceptions) || isNormallyClosedAllDay($date, $openHours)) {
     return false;
+  } elseif (isNormallyOpenAllDay($date, $openHours)) { // Check if the gate is normally open all day.
+    return true;
   }
 
-  if ($openHours[$day][0] == '00:00-00:00') { 															  // Check if the gate is open all day.
-  	return true;
-  } else {
-  	foreach($openHours[$day] as $range) { 																		// Check if the gate is open.
-  		$range = explode("-", $range);
-  		$start = strtotime($range[0]);
-  		$end = strtotime($range[1]);
-  		if (($start <= $time) && ($time <= $end)) {                             // If the gate is open,
-  			return true;
-  			}
-  		}
-  	}
-  		return [false, '', ''];
-  	} else {
-  		return false;
-  	}
-  }
-}
+  // Check if the gate is open.
+	foreach($openHours[$day] as $range) {
+		$range = explode("-", $range);
+		$start = strtotime($range[0]);
+		$end = strtotime($range[1]);
 
-function isClosedAllDay($date, $openHours, $exceptions) { // Check if gate is closed on a specific day.
-	$date = strtotime($date); 															// Prepare variables.
-	$day = strtolower(date("D", strtotime($date)));
-	
-	if (isset($exceptions)) { 															// If $exceptions is provided,
-		foreach($exceptions as $ex => $ex_day) { 							// Check if today is an exception.
-			$ex_day = strtotime($ex_day);
-			if ($ex_day === $date) {
-				return true;
-			}
+    // If the gate is open,
+		if (($start <= $time) && ($time <= $end)) {
+      return true;
 		}
-	}
-
-	if (count($openHours[$day]) === 0) { 						        // Check if the store is closed all day.
-		return true;
 	}
 	return false;
 }
 
-function isOpenNow($openHours, $exceptions) { // Check if the gate is open now.
-	$time = date("G:i");
-	$date = date("m/d/Y");
+function isNormallyOpenAllDay($date = $today, $openHours = $openHours) {
+  // Prepare variables.
+  $date = strtotime($date);
+  $day = strtolower(date("D", strtotime($date)));
 
-	return isOpen($time, $date, $openHours, $exceptions);
+  // Check if the store is open all day.
+  if($openHours[$day][0] === '00:00-00:00') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isNormallyClosedAllDay($date = $today, $openHours = $openHours) {
+	// Prepare variables.
+  $date = strtotime($date);
+	$day = strtolower(date("D", strtotime($date)));
+
+  // Check if the store is closed all day.
+	if (count($openHours[$day]) === 0 || $openHours[$day][0] == '') {
+		return true;
+	} else {
+    return false;
+  }
+}
+
+function isException($date = $today, $exceptions = $exceptions) {
+  // Prepare variables.
+  $date = strtotime($date);
+
+  // Check if today is an exception.
+  foreach($exceptions as $ex => $exDay) {
+    $exDay = strtotime($exDay);
+    if ($exDay === $date) {
+      return true;
+    }
+  }
+  return false;
 }
 
 ?>

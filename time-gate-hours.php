@@ -1,7 +1,7 @@
 <?php
 // Set your timezone (codes listed at http://php.net/manual/en/timezones.php).
 // Delete the following line if you've already defined a timezone elsewhere.
-date_default_timezone_set('America/New_York'); 
+date_default_timezone_set('America/New_York');
 
 // Define daily hours for which the time gate will be open.
 // Times must be in 24-hour format, separated by dash.
@@ -15,7 +15,7 @@ $openHours = array(
   'wed' => array('00:00-00:00'),                  // Open all day.
   'thu' => array('00:00-2:00','11:00-23:59'),     // Open past midnight.
   'fri' => array('00:00-2:00', '11:00-20:30'),
-  'sat' => array(''),                             // Closed all day.
+  'sat' => array(),                               // Closed all day.
   'sun' => array('11:00-20:30')
 );
 
@@ -23,7 +23,7 @@ $openHours = array(
 // Works best with format day/month
 // Leave array empty if no exceptions
 $exceptions = array(
-  //'Christmas' => '10/22',
+  //'Christmas' => '12/25',
   //'New Years Day' => '1/1'
 );
 ?>
