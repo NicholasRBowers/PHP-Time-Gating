@@ -1,19 +1,11 @@
 <?php
 require_once('time-gate-hours.php');
 
-$time = '17:00';
-$date = '05/13';
-echo $time.' '.$date.'<br />';
-$ret = isOpen($time, $date, true);
-print_r($ret);
-echo '<br />'.date('G:i m/d/Y', $ret[1]);
-echo '<br />'.date('G:i m/d/Y', $ret[2]);
-
 function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0) {
   // Initialize variables.
   if ($time === NULL) $time = date("G:i");
   if ($date === NULL) $date = date("m/d/Y");
-  $time = strtotime($time.' '.$date);
+  if ($time !== false && $time !== true) $time = strtotime($time.' '.$date);
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
   $day = strtolower(date("D", strtotime($date)));
@@ -63,7 +55,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
   } elseif ($time === true && $iteration > 0) {
     $bounds = getBounds($openHours[$day][0], $date);
     if ($bounds[0] === strtotime('00:00 '.$date) || $bounds[0] === strtotime('00:00:00 '.$date)) return $bounds[1];
-    else return strtotime('00:00');
+    else return strtotime('00:00 '.$date);
   
   // We break out of the recursive modes.
   } else {
@@ -118,13 +110,13 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
 
 function isClosedAllDay($date = NULL) {
   // Initialize variables.
-  if ($date === NULL) $date = date("m/d");
+  if ($date === NULL) $date = date("m/d/Y");
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
   $day = strtolower(date("D", strtotime($date)));
 
   // Check if the store is closed all day.
-  if (count($openHours[$day]) === 0 || $openHours[$day][0] == '') {
+  if (count($openHours[$day]) === 0 || $openHours[$day][0] === '') {
     return true;
   } else {
     // Check if today is an exception.
@@ -140,7 +132,7 @@ function isClosedAllDay($date = NULL) {
 
 function isOpenAllDay($date = NULL) {
   // Initialize variables.
-  if ($date === NULL) $date = date("m/d");
+  if ($date === NULL) $date = date("m/d/Y");
   $openHours = $GLOBALS['openHours'];
   $day = strtolower(date("D", strtotime($date)));
 
