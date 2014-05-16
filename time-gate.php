@@ -1,6 +1,14 @@
 <?php
 require_once('time-gate-hours.php');
 
+function getGateStatus($time = NULL, $date = NULL) {
+  return isOpen($time, $date);
+}
+
+function getGateDetails($time = NULL, $date = NULL) {
+  return isOpen($time, $date, true);
+}
+
 function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0) {
   // Initialize variables.
   if ($time === NULL) $time = date("G:i");
