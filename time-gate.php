@@ -1,8 +1,10 @@
 <?php
 require_once('time-gate-hours.php');
 
-echo date('G:i m/d/Y', strtotime(date('9:59 05/14'))).'<br />';
-$ret = isOpen('9:59', '05/14', true);
+$time = '17:00';
+$date = '05/13';
+echo $time.' '.$date.'<br />';
+$ret = isOpen($time, $date, true);
 print_r($ret);
 echo '<br />'.date('G:i m/d/Y', $ret[1]);
 echo '<br />'.date('G:i m/d/Y', $ret[2]);
@@ -11,6 +13,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
   // Initialize variables.
   if ($time === NULL) $time = date("G:i");
   if ($date === NULL) $date = date("m/d/Y");
+  $time = strtotime($time.' '.$date);
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
   $day = strtolower(date("D", strtotime($date)));
@@ -80,8 +83,8 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
       // If the gate is open,
       if (($openTime <= $time) && ($time <= $closeTimes[$i])) {
         if ($getDetails) {
-          if ($openTime === strtotime('00:00:00')) $openTime = isOpen(true, $yesterdayDate, true, $iteration - 1);
-          if ($closeTimes[$i] === strtotime('23:59:59') || $closeTimes[$i] === strtotime('23:59')) $closeTimes[$i] = isOpen(true, $tomorrowDate, true, $iteration + 1);
+          if ($openTime === strtotime('00:00 '.$date)) $openTime = isOpen(true, $yesterdayDate, true, $iteration - 1);
+          if ($closeTimes[$i] === strtotime('23:59:59 '.$date) || $closeTimes[$i] === strtotime('23:59 '.$date)) $closeTimes[$i] = isOpen(true, $tomorrowDate, true, $iteration + 1);
           return array(true, $openTime, $closeTimes[$i]);
         }
         return true;
@@ -105,8 +108,8 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
       // If we've passed the time,
       if ($closeTime > $time) break;
       // If the gate is closed,
-      if (($closeTime <= $time) && ($time <= $openTimes[$j])) {
-        if ($getDetails) return array(false, $closeTime, $openTimes[$j]);
+      if (($closeTime <= $time) && ($time <= $openTimes[$j + 1])) {
+        if ($getDetails) return array(false, $closeTime, $openTimes[$j + 1]);
         return false;
       }
     }
