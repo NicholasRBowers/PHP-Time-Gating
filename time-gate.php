@@ -1,6 +1,7 @@
 <?php
 require_once('time-gate-hours.php');
 
+echo date('G:i').'<br />';
 $ret = isOpen('9:59', '05/14', true);
 print_r($ret);
 echo '<br />'.date('G:i m/d', $ret[1]);
@@ -12,7 +13,6 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
   if ($date === NULL) $date = date("m/d");
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
-  $time = strtotime($time);
   $day = strtolower(date("D", strtotime($date)));
   $tomorrowDate = date('m/d' , strtotime($date."+1 days"));
   $tomorrowDay = strtolower(date("D", strtotime($date."+1 days")));
@@ -53,20 +53,17 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
   // 3. If the gate is open, and we're getting details for yesterday,
   elseif ($time === true && $iteration < 0) {
     $bounds = getBounds($openHours[$day][count($openHours[$day]) - 1]);
-    if ($bounds[1] === '23:59' || $bounds[1] === '23:59:59') return $bounds[0];
-    else return '00:00';
+    if ($bounds[1] === strtotime('23:59') || $bounds[1] === strtotime('23:59:59')) return $bounds[0];
+    else return strtotime('00:00');
   //
   // 4. If the gate is open, and we're getting details for tomorrow,
   } elseif ($time === true && $iteration > 0) {
     $bounds = getBounds($openHours[$day][0]);
-    if ($bounds[0] === '00:00' || $bounds[0] === '00:00:00') return $bounds[1];
-    else return '00:00';
+    if ($bounds[0] === strtotime('00:00') || $bounds[0] === strtotime('00:00:00')) return $bounds[1];
+    else return strtotime('00:00');
   
   // We break out of the recursive modes.
   } else {
-    // Check if the gate is open.
-    $start = strtotime('00:00');
-    $end = strtotime('23:59');
     $openTimes = array();
     $closeTimes = array();
 
@@ -83,11 +80,9 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
       // If the gate is open,
       if (($openTime <= $time) && ($time <= $closeTimes[$i])) {
         if ($getDetails) {
-          if ($openTime === strtotime('00:00:00') && $iteration <= 0) $openTime = isOpen(true, $yesterdayDate, true, $iteration - 1);
-          if ($closeTimes[$i] === strtotime('23:59:59') || $closeTimes[$i] === strtotime('23:59') && $iteration >= 0) $closeTimes[$i] = isOpen(true, $tomorrowDate, true, $iteration + 1);
-          if ($iteration < 0) return $openTime;
-          elseif ($iteration > 0) return $closeTimes[$i];
-          else return array(true, $openTime, $closeTimes[$i]);
+          if ($openTime === strtotime('00:00:00')) $openTime = isOpen(true, $yesterdayDate, true, $iteration - 1);
+          if ($closeTimes[$i] === strtotime('23:59:59') || $closeTimes[$i] === strtotime('23:59')) $closeTimes[$i] = isOpen(true, $tomorrowDate, true, $iteration + 1);
+          return array(true, $openTime, $closeTimes[$i]);
         }
         return true;
       }
@@ -95,7 +90,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
     //
     // * Check close time frames * //
     // Edge cases.
-    if ($getDetails && $iteration === 0) {
+    if ($getDetails) {
       if ($time < $openTimes[0]) {
         return array(false, isOpen(false, $yesterdayDate, true, -1), $openTimes[0]);
       } elseif ($time > $closeTimes[count($closeTimes) - 1]) {
