@@ -1,16 +1,16 @@
 <?php
 require_once('time-gate-hours.php');
 
-echo date('G:i').'<br />';
+echo date('G:i m/d/Y', strtotime(date('9:59 05/14'))).'<br />';
 $ret = isOpen('9:59', '05/14', true);
 print_r($ret);
-echo '<br />'.date('G:i m/d', $ret[1]);
-echo '<br />'.date('G:i m/d', $ret[2]);
+echo '<br />'.date('G:i m/d/Y', $ret[1]);
+echo '<br />'.date('G:i m/d/Y', $ret[2]);
 
 function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0) {
   // Initialize variables.
   if ($time === NULL) $time = date("G:i");
-  if ($date === NULL) $date = date("m/d");
+  if ($date === NULL) $date = date("m/d/Y");
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
   $day = strtolower(date("D", strtotime($date)));
@@ -45,21 +45,21 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
 
   // * After the initial all-day checks, we break into one of four recursive modes for getDetails * //
   // 1. If the gate is closed, and we're getting details for yesterday,
-  if ($time === false && $iteration < 0) return getBounds($openHours[$day][count($openHours[$day]) - 1], 'END');
+  if ($time === false && $iteration < 0) return getBounds($openHours[$day][count($openHours[$day]) - 1], $date, 'END');
   //
   // 2. If the gate is closed, and we're getting details for tomorrow,
-  elseif ($time === false && $iteration > 0) return getBounds($openHours[$day][0], 'START');
+  elseif ($time === false && $iteration > 0) return getBounds($openHours[$day][0], $date, 'START');
   //
   // 3. If the gate is open, and we're getting details for yesterday,
   elseif ($time === true && $iteration < 0) {
-    $bounds = getBounds($openHours[$day][count($openHours[$day]) - 1]);
-    if ($bounds[1] === strtotime('23:59') || $bounds[1] === strtotime('23:59:59')) return $bounds[0];
-    else return strtotime('00:00');
+    $bounds = getBounds($openHours[$day][count($openHours[$day]) - 1], $date);
+    if ($bounds[1] === strtotime('23:59 '.$date) || $bounds[1] === strtotime('23:59:59 '.$date)) return $bounds[0];
+    else return strtotime('00:00 '.$tomorrowDate);
   //
   // 4. If the gate is open, and we're getting details for tomorrow,
   } elseif ($time === true && $iteration > 0) {
-    $bounds = getBounds($openHours[$day][0]);
-    if ($bounds[0] === strtotime('00:00') || $bounds[0] === strtotime('00:00:00')) return $bounds[1];
+    $bounds = getBounds($openHours[$day][0], $date);
+    if ($bounds[0] === strtotime('00:00 '.$date) || $bounds[0] === strtotime('00:00:00 '.$date)) return $bounds[1];
     else return strtotime('00:00');
   
   // We break out of the recursive modes.
@@ -68,7 +68,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
     $closeTimes = array();
 
     foreach($openHours[$day] as $range) {
-      $bounds = getBounds($range);
+      $bounds = getBounds($range, $date);
       array_push($openTimes, $bounds[0]);
       array_push($closeTimes, $bounds[1]);
     }
@@ -115,7 +115,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
 
 function isClosedAllDay($date = NULL) {
   // Initialize variables.
-  if ($date === NULL) { $date = date("m/d"); }
+  if ($date === NULL) $date = date("m/d");
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
   $day = strtolower(date("D", strtotime($date)));
@@ -137,7 +137,7 @@ function isClosedAllDay($date = NULL) {
 
 function isOpenAllDay($date = NULL) {
   // Initialize variables.
-  if ($date === NULL) { $date = date("m/d"); }
+  if ($date === NULL) $date = date("m/d");
   $openHours = $GLOBALS['openHours'];
   $day = strtolower(date("D", strtotime($date)));
 
@@ -149,10 +149,11 @@ function isOpenAllDay($date = NULL) {
   }
 }
 
-function getBounds($range, $mode = 0) {
+function getBounds($range, $date = NULL, $mode = 0) {
+  if ($date === NULL) $date = date("m/d/Y");
   $range = explode("-", $range);
-  $start = strtotime($range[0]);
-  $end = strtotime($range[1]);
+  $start = strtotime($range[0].' '.$date);
+  $end = strtotime($range[1].' '.$date);
   if ($mode === 'START') {
     return $start;
   } elseif ($mode === 'END') {
