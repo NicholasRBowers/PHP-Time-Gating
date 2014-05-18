@@ -119,9 +119,10 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
 function isClosedAllDay($date = NULL) {
   // Initialize variables.
   if ($date === NULL) $date = date("m/d/Y");
+  $date = strtotime($date);
   $openHours = $GLOBALS['openHours'];
   $exceptions = $GLOBALS['exceptions'];
-  $day = strtolower(date("D", strtotime($date)));
+  $day = strtolower(date("D", $date));
 
   // Check if the store is closed all day.
   if (count($openHours[$day]) === 0 || $openHours[$day][0] === '') {
