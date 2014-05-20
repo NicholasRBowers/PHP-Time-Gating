@@ -32,7 +32,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
       if ($iteration < 0) return $start;
       elseif ($iteration > 0) return $end;
       else return array(false, $start, $end);
-    } else { return false; }
+    } else return false;
   //
   // Check if the gate is open all day.
   } elseif (isOpenAllDay($date)) {
@@ -43,7 +43,7 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
       if ($iteration < 0) return $start;
       elseif ($iteration > 0) return $end;
       else return array(true, $start, $end);
-    } else { return true; }
+    } else return true;
   }
 
   // * After the initial all-day checks, we break into one of four recursive modes for getDetails * //
@@ -94,14 +94,9 @@ function isOpen($time = NULL, $date = NULL, $getDetails = false, $iteration = 0)
     // * Check close time frames * //
     // Edge cases.
     if ($getDetails) {
-      if ($time < $openTimes[0]) {
-        return array(false, isOpen(false, $yesterdayDate, true, -1), $openTimes[0]);
-      } elseif ($time > $closeTimes[count($closeTimes) - 1]) {
-        return array(false, $closeTimes[count($closeTimes) - 1], isOpen(false, $tomorrowDate, true, 1));
-      }
-    } else {
-      return false;
-    }
+      if ($time < $openTimes[0]) return array(false, isOpen(false, $yesterdayDate, true, -1), $openTimes[0]);
+      elseif ($time > $closeTimes[count($closeTimes) - 1]) return array(false, $closeTimes[count($closeTimes) - 1], isOpen(false, $tomorrowDate, true, 1));
+    } else return false;
     //
     // Mid-day cases.
     foreach($closeTimes as $j => $closeTime) {
@@ -125,15 +120,12 @@ function isClosedAllDay($date = NULL) {
   $day = strtolower(date("D", $date));
 
   // Check if the store is closed all day.
-  if (count($openHours[$day]) === 0 || $openHours[$day][0] === '') {
-    return true;
-  } else {
+  if (count($openHours[$day]) === 0 || $openHours[$day][0] === '') return true;
+  else {
     // Check if today is an exception.
     foreach($exceptions as $ex => $exDay) {
       $exDay = strtotime($exDay);
-      if ($exDay === $date) {
-        return true;
-      }
+      if ($exDay === $date) return true;
     }
     return false;
   }
@@ -146,11 +138,8 @@ function isOpenAllDay($date = NULL) {
   $day = strtolower(date("D", strtotime($date)));
 
   // Check if the gate is open all day.
-  if($openHours[$day][0] === '00:00-00:00') {
-    return true;
-  } else {
-    return false;
-  }
+  if($openHours[$day][0] === '00:00-00:00') return true;
+  else return false;
 }
 
 function getBounds($range, $date = NULL, $mode = 0) {
@@ -158,13 +147,9 @@ function getBounds($range, $date = NULL, $mode = 0) {
   $range = explode("-", $range);
   $start = strtotime($range[0].' '.$date);
   $end = strtotime($range[1].' '.$date);
-  if ($mode === 'START') {
-    return $start;
-  } elseif ($mode === 'END') {
-    return $end;
-  } else {
-    return array($start, $end);
-  }
+  if ($mode === 'START') return $start;
+  elseif ($mode === 'END') return $end;
+  else return array($start, $end);
 }
 
 ?>
